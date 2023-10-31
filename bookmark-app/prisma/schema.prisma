@@ -23,6 +23,8 @@ model User{
   lastName String?
 
   bookmarks Bookmark[]
+
+  @@map("users")
 }
 
 
@@ -32,9 +34,12 @@ model Bookmark{
   updatedAt DateTime @updatedAt
 
   title String
-  description String
+  description String?
   link String
 
   userId Int
   user User @relation(fields: [userId], references: [id])
+
+  @@map("bookmarks")
+
 }

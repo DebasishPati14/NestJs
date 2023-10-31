@@ -20,6 +20,7 @@ export class AuthStrategy extends PassportStrategy(Strategy, 'jwtGuard') {
     const userObj = await this.prismaService.user.findUnique({
       where: { id: reqPayload.sub },
     });
+
     delete userObj.hash;
     return userObj;
   }
