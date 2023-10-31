@@ -2,20 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { BookmarkDto, EditBookmarkDto } from './dto';
 
-export interface BookmarkBody {
+export interface BookmarkParams {
   orderBy: 'asc' | 'desc';
-  pageOffset: PageOffset;
-  searchText: string;
-}
-interface PageOffset {
   pageNumber: number;
   pageSize: number;
+  searchText: string;
 }
+
 @Injectable()
 export class BookmarkService {
   constructor(private prismaService: PrismaService) {}
 
-  async getAllBookmarks(userId: number, body: BookmarkBody) {
+  async getAllBookmarks(userId: number, body: BookmarkParams) {
     const count = await this.prismaService.bookmark.count({
       where: {
         userId,
@@ -85,14 +83,12 @@ export class BookmarkService {
       : { error: 'No Bookmark found with given Id' };
   }
 
-  async findAndGetBookmarks(userId: number, body: BookmarkBody) {
-    const skipCount =
-      (body.pageOffset?.pageSize || 2) *
-      ((body.pageOffset?.pageNumber || 1) - 1);
+  async findAndGetBookmarks(userId: number, body: BookmarkParams) {
+    const skipCount = (body.pageSize || 2) * ((body.pageNumber || 1) - 1);
 
     return this.prismaService.bookmark.findMany({
       skip: skipCount,
-      take: body.pageOffset?.pageSize || 2,
+      take: body.pageSize || 2,
       orderBy: { title: body.orderBy || 'asc' },
       where: {
         userId,

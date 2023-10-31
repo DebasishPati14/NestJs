@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtGuard } from '../auth/guard';
-import { BookmarkService, BookmarkBody } from './bookmark.service';
+import { BookmarkService, BookmarkParams } from './bookmark.service';
 import { GetUser } from '../auth/decorator';
 import { BookmarkDto, EditBookmarkDto } from './dto';
 
@@ -19,7 +19,9 @@ export class BookmarkController {
   constructor(private bookmarkService: BookmarkService) {}
 
   @Get('all-bookmarks')
-  getBookmarks(@GetUser('id') userId: number, @Body() body: BookmarkBody) {
+  getBookmarks(@GetUser('id') userId: number, @Param() body: BookmarkParams) {
+    console.table(body);
+
     return this.bookmarkService.getAllBookmarks(userId, body);
   }
 
