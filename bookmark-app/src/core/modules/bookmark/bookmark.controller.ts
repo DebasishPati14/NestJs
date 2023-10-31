@@ -1,4 +1,5 @@
 import {
+  Bind,
   Body,
   Controller,
   Delete,
@@ -6,17 +7,40 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { JwtGuard } from '../auth/guard';
 import { BookmarkService, BookmarkParams } from './bookmark.service';
 import { GetUser } from '../auth/decorator';
 import { BookmarkDto, EditBookmarkDto } from './dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @UseGuards(JwtGuard)
 @Controller('bookmark')
 export class BookmarkController {
   constructor(private bookmarkService: BookmarkService) {}
+
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/',
+        filename: (err, file, cb) => {
+          const fileName = Date.now() + '-' + file.originalname;
+          console.log('saved');
+
+          cb(null, fileName);
+        },
+      }),
+    }),
+  )
+  @Bind(UploadedFile())
+  uploadFile(file: Express.Multer.File) {
+    console.log(file);
+  }
 
   @Get('all-bookmarks')
   getBookmarks(@GetUser('id') userId: number, @Param() body: BookmarkParams) {
