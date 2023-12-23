@@ -6,10 +6,7 @@ import type { Response } from 'express';
 @Controller('file')
 export class FileController {
   @Get(':filename')
-  getFile(
-    @Res({ passthrough: true }) res: Response,
-    @Param('filename') fileName: string,
-  ): StreamableFile {
+  getFile(@Res({ passthrough: true }) res: Response, @Param('filename') fileName: string): StreamableFile {
     const fileExtension = fileName.split('.')[fileName.split('.').length - 1];
 
     const file = createReadStream(join(process.cwd(), `uploads/${fileName}`));
