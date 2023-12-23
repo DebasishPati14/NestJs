@@ -31,7 +31,7 @@ export class AuthService {
     return this.secretToken(user.email, user.id);
   }
 
-  async postSignUp(dto: AuthDto) {
+  async postSignUp(dto: AuthDto): Promise<{ access_token: string }> {
     try {
       // get the hash for password
       const hash = await argon.hash(dto.password);

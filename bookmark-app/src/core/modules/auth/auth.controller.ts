@@ -7,19 +7,13 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @HttpCode(HttpStatus.OK)
-  @Post('login')
-  login(@Body() loginDto: AuthDto) {
-    // login(
-    //   @Body('email') email: string,
-    //   @Body('password', ParseIntPipe) password: number,
-    // ) {
-    console.log({ dto: loginDto });
-
+  @Post('sign-in')
+  login(@Body() loginDto: AuthDto): Promise<{ access_token: string }> {
     return this.authService.postLogin(loginDto);
   }
 
-  @Post('signup')
-  signup(@Body() signupDto: AuthDto) {
+  @Post('sign-up')
+  signup(@Body() signupDto: AuthDto): Promise<{ access_token: string }> {
     return this.authService.postSignUp(signupDto);
   }
 }

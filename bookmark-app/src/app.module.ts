@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
-import { ServeStaticModule } from '@nestjs/serve-static';
-
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './core/modules/auth/auth.module';
