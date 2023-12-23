@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { BookmarkDto, EditBookmarkDto } from './dto';
+import { AllBookmarkResponse, BookmarkRequest, BookmarkResponse, EditBookmarkDto } from './dto';
+import { RESPONSE_MESSAGES } from 'src/common/constants';
+import { DeleteResponse, ErrorResponse } from 'src/common/types';
 
 export interface BookmarkParams {
   orderBy: 'asc' | 'desc';
@@ -13,17 +15,20 @@ export interface BookmarkParams {
 export class BookmarkService {
   constructor(private prismaService: PrismaService) {}
 
-  async getAllBookmarks(userId: number, body: BookmarkParams) {
+  async getAllBookmarks(userId: number, body: BookmarkParams): Promise<AllBookmarkResponse> {
     const count = await this.prismaService.bookmark.count({
       where: {
         userId,
       },
     });
 
-    return { records: await this.findAndGetBookmarks(userId, body), count };
+    return {
+      records: await this.findAndGetBookmarks(userId, body),
+      totalCount: count,
+    };
   }
 
-  async getBookmarkById(userId: number, bookmarkId: number) {
+  async getBookmarkById(userId: number, bookmarkId: number): Promise<BookmarkResponse | ErrorResponse> {
     const bookmarkDetail = await this.prismaService.bookmark.findUnique({
       where: {
         userId,
@@ -31,12 +36,10 @@ export class BookmarkService {
       },
     });
 
-    return bookmarkDetail
-      ? bookmarkDetail
-      : { error: 'No Bookmark found with given Id' };
+    return bookmarkDetail ? bookmarkDetail : { error: RESPONSE_MESSAGES.bookmarkErrorMessage };
   }
 
-  async createBookmark(userId: number, bookmarkDto: BookmarkDto) {
+  async createBookmark(userId: number, bookmarkDto: BookmarkRequest): Promise<BookmarkResponse> {
     return await this.prismaService.bookmark.create({
       data: {
         title: bookmarkDto.title,
@@ -51,7 +54,7 @@ export class BookmarkService {
     userId: number,
     bookmarkId: number,
     editBookmarkDto: EditBookmarkDto,
-  ) {
+  ): Promise<BookmarkResponse | { error: string }> {
     try {
       const bookmarkDetail = await this.prismaService.bookmark.update({
         where: {
@@ -63,15 +66,13 @@ export class BookmarkService {
           ...editBookmarkDto,
         },
       });
-      return bookmarkDetail
-        ? bookmarkDetail
-        : { error: 'No Bookmark found with given Id' };
+      return bookmarkDetail ? bookmarkDetail : { error: 'No Bookmark found with given Id' };
     } catch (error) {
       return { error };
     }
   }
 
-  async deleteBookmarkById(userId: number, bookmarkId: number) {
+  async deleteBookmarkById(userId: number, bookmarkId: number): Promise<ErrorResponse | DeleteResponse> {
     const bookmarkDetail = await this.prismaService.bookmark.delete({
       where: {
         userId,
@@ -79,8 +80,8 @@ export class BookmarkService {
       },
     });
     return bookmarkDetail
-      ? bookmarkDetail
-      : { error: 'No Bookmark found with given Id' };
+      ? { success: RESPONSE_MESSAGES.deleteSuccessMessage }
+      : { error: RESPONSE_MESSAGES.bookmarkErrorMessage };
   }
 
   async findAndGetBookmarks(userId: number, body: BookmarkParams) {

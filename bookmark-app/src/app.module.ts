@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './core/modules/auth/auth.module';
 import { PrismaModule } from './core/modules/prisma/prisma.module';
@@ -19,7 +18,6 @@ import { FilesModule } from './files/files.module';
     BookmarkModule,
     FilesModule,
   ],
-  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

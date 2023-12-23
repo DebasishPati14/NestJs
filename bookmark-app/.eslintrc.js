@@ -23,7 +23,8 @@ module.exports = {
     "prettier/prettier": [
       "error",
       {
-        "endOfLine": "auto"
+        "endOfLine": "auto",
+        "printWidth": 120
       }
     ],
     '@typescript-eslint/no-explicit-any': 'off',

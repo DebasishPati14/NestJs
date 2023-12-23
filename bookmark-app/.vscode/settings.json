@@ -5,4 +5,5 @@
     "prettier.useEditorConfig": false,
     "prettier.useTabs": false,
     "prettier.configPath": ".prettierrc.json",
+    "prettier.printWidth": 120
 }

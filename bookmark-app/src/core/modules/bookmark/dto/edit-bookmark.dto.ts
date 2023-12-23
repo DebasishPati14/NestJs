@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger/dist/decorators';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class EditBookmarkDto {
@@ -9,6 +10,7 @@ export class EditBookmarkDto {
   @IsNotEmpty()
   link: string;
 
+  @ApiProperty()
   @IsString()
   @IsOptional()
   description?: string;
